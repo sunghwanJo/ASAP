@@ -4,6 +4,7 @@ Created on 2012. 10. 3.
 @author: Anonymous
 '''
 from ASAP.network import Connection
+from ASAP.models import DatabaseManager
 from ASAP import settings
 
 import os
@@ -12,9 +13,11 @@ from socket import AF_INET, SOCK_STREAM, socket
 class Server(object):
     def __init__(self):
         self.prepare_logging()
+        DatabaseManager().init_database()
             
     def prepare_logging(self):
         if settings.DEBUG: 
+            os.chdir(settings.PROJECT_PATH)
             if not os.path.exists('log'):
                 os.mkdir('log')
                 file(settings.LOG_FILE_PATH, 'w').close()
