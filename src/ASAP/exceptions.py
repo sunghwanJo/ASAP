@@ -10,3 +10,6 @@ class ASAPError(Exception):
 
 class NoParameterError(ASAPError):
     pass
+
+class ProtocolNotFoundError(ASAPError):
+    pass

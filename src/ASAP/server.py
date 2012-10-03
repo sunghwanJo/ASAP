@@ -3,39 +3,8 @@ Created on 2012. 10. 3.
 
 @author: Anonymous
 '''
-from ASAP.navigator import Navigator
-
+from ASAP.network import Connection
 from socket import AF_INET, SOCK_STREAM, socket
-from threading import Thread
-import json
-
-class RequestAcceptor(Thread):
-    def __init__(self, conn, addr):
-        Thread.__init__(self)
-        self.conn = conn
-        self.addr = addr
-    
-    def run(self):
-        print self.addr
-        received_data = self.get_data()
-        navigator = Navigator(received_data)
-        response = navigator.get_response()
-        print response
-        self.conn.send(response)
-        
-    
-    def get_data(self):
-        data = []
-        while True:
-            fragment = self.conn.recv(10240)
-            data.append(fragment)
-            try:
-                result = json.loads(''.join(data))
-                break
-            except:
-                pass
-        return result
-            
 
 class Server(object):
     def __init__(self, host, port):
@@ -49,7 +18,7 @@ class Server(object):
         while True:
             try:
                 conn, addr = self.s.accept()
-                request_acceptor = RequestAcceptor(conn, addr)
+                request_acceptor = Connection(conn, addr)
                 request_acceptor.start()
             except Exception, e:
                 print e

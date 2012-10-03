@@ -46,6 +46,8 @@ class TestBasic(unittest.TestCase):
         self.assertTrue(data['status'].has_key('reason'))
         self.assertEqual(data['status']['code'], 'NoParameterError')
         self.assertEqual(data['status']['reason'], 'protocol')
+        self.assertTrue(data.has_key('protocol'))
+        self.assertEqual(data['protocol'], '')
 
 if __name__ == '__main__':
     unittest.main()
