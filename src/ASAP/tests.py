@@ -1,3 +1,8 @@
+'''
+Created on 2012. 10. 3.
+
+@author: Anonymous
+'''
 import unittest, json
 from socket import AF_INET, SOCK_STREAM, socket
 
@@ -10,10 +15,20 @@ class Client(object):
         self.cs.connect((host, port))
         
     
-    def request(self, data):
-        data = json.loads(data)
-        self.cs.send(data)
-        return json.loads(self.read(10240))
+    def request(self, request_data):
+        request_data = json.dumps(request_data)
+        self.cs.send(request_data)
+        response_data = []
+        while True:
+            fragment = self.cs.recv(10240)
+            response_data.append(fragment)            
+            try:
+                result = json.loads(''.join(response_data))
+                break
+            except:
+                pass
+        print '>>> %s'%result
+        return result
 
 
 class TestBasic(unittest.TestCase):
@@ -25,7 +40,7 @@ class TestBasic(unittest.TestCase):
 
     def test_basic_protocol(self):
         c = Client(HOST, PORT)
-        data = c.request({})
+        data = c.request({'test':123})
         self.assertTrue(data.has_key('status'))
         self.assertTrue(data['status'].has_key('code'))
         self.assertTrue(data['status'].has_key('reason'))
