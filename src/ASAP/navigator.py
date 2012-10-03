@@ -1,17 +1,15 @@
+from ASAP.request import Request
 import json
 
 class Navigator(object):
-    def __init__(self, request):
-        self.request = request
-        status = dict(code='OK', reason='OK')
+    response = {}
+    def __init__(self, parameters):        
         try:
-            protocol = self.request['protocol']
-            print protocol
-        except KeyError:
-            status['code'] = 'NoParameterError'
-            status['reason'] = 'protocol'
-        self.response = dict(status=status)
-        
-    
+            self.request = Request(parameters)
+        except Exception, exception:
+            self.response['status'] = dict(code=str(exception.__class__.__name__), reason=unicode(exception))
+        else:
+            self.response['status'] = dict(code='OK', reason='OK')
+            
     def get_response(self):        
         return json.dumps(self.response)

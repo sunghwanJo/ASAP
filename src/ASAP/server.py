@@ -3,9 +3,10 @@ Created on 2012. 10. 3.
 
 @author: Anonymous
 '''
+from ASAP.navigator import Navigator
+
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
-from navigator import Navigator
 import json
 
 class RequestAcceptor(Thread):
