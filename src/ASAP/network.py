@@ -1,13 +1,21 @@
 from ASAP.navigator import Navigator
 from ASAP.exceptions import NoParameterError
+from ASAP import settings
 from threading import Thread
-import json
+import json, datetime
             
 
 class Request(object):
+    _conn = None
+    parameters = None
+    meta = None
+    response = None
+    
     def __init__(self, conn, parameters):
         self._conn = conn        
-        self.parameters = parameters        
+        self.parameters = parameters 
+        self.meta = dict()
+        self.meta['request_time'] = str(datetime.datetime.now()) 
     
     def get_parameter(self, key, is_required=True):
         value = self.parameters.get(key, None)
@@ -15,8 +23,13 @@ class Request(object):
             raise NoParameterError(key)
         return value
     
-    def reply(self, return_dict):
-        self._conn.send(json.dumps(return_dict))        
+    def reply(self, response):
+        self.response = response
+        self._conn.send(json.dumps(response))
+        self.meta['response_time'] = str(datetime.datetime.now())
+    
+    def is_replied(self):
+        return self.response != None
 
 class RequestProcessor(Thread):
     def __init__(self, request):
@@ -25,16 +38,26 @@ class RequestProcessor(Thread):
     
     def run(self):
         response = dict(protocol='')
+        traced_back = ''
         try:
             response['protocol'] = self.request.get_parameter('protocol')
             view = Navigator.get_view(self.request.get_parameter('protocol'))
             response.update(view(self.request))
         except Exception, exception:
             response['status'] = dict(code=str(exception.__class__.__name__), reason=unicode(exception))
+            import traceback
+            traced_back = traceback.format_exc()
         else:
             response['status'] = dict(code='OK', reason='OK')
-        
+            
         self.request.reply(response)
+        self.log(traced_back)
+    
+    def log(self, traced_back):
+        if settings.DEBUG:
+            from log import Logger
+            logger = Logger(self.request, traced_back)
+            logger.log()
 
 class Connection(Thread):
     def __init__(self, conn, addr):
@@ -46,7 +69,7 @@ class Connection(Thread):
         while True:
             request = self.get_request()
             request_processor = RequestProcessor(request)
-            request_processor.start()        
+            request_processor.start()
     
     def get_request(self):
         data = []

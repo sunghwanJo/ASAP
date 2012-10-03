@@ -13,3 +13,6 @@ class NoParameterError(ASAPError):
 
 class ProtocolNotFoundError(ASAPError):
     pass
+
+class IllegalStateError(ASAPError):
+    pass
