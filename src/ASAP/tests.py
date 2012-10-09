@@ -1,9 +1,4 @@
-'''
-Created on 2012. 10. 3.
-
-@author: Anonymous
-'''
-import unittest, json
+import unittest, json, struct
 from socket import AF_INET, SOCK_STREAM, socket
 
 HOST='127.0.0.1'
@@ -17,17 +12,12 @@ class Client(object):
     
     def request(self, request_data):
         request_data = json.dumps(request_data)
+        packed = struct.pack(">I", len(request_data))
+        self.cs.send(packed)
         self.cs.send(request_data)
-        response_data = []
-        while True:
-            fragment = self.cs.recv(10240)
-            response_data.append(fragment)            
-            try:
-                result = json.loads(''.join(response_data))
-                break
-            except:
-                pass
-        print '>>> %s'%result
+        response_length = struct.unpack(">I", self.cs.recv(4))[0]
+        print 'length',response_length
+        result = json.loads(''.join(self.cs.recv(response_length)))
         return result
 
 

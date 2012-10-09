@@ -25,6 +25,9 @@ class User(Base):
     def __repr__(self):
         return '<User %r>'%self.username
 
+    def set_password(self, password):
+        self.password = hashlib.sha256(password)
+
 
 
 class DatabaseManager(object):

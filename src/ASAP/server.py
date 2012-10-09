@@ -11,9 +11,15 @@ import os
 from socket import AF_INET, SOCK_STREAM, socket
 
 class Server(object):
-    def __init__(self):
+    def __init__(self, host='', port=0):
         self.prepare_logging()
         DatabaseManager().init_database()
+        if host == '':
+            host = settings.HOST
+        if port == 0:
+            port = settings.PORT
+        self.host = host
+        self.port = port
             
     def prepare_logging(self):
         if settings.DEBUG: 

@@ -2,7 +2,7 @@ from ASAP.navigator import Navigator
 from ASAP.exceptions import NoParameterError
 from ASAP import settings
 from threading import Thread
-import json, datetime
+import json, datetime, struct
             
 
 class Request(object):
@@ -25,7 +25,9 @@ class Request(object):
     
     def reply(self, response):
         self.response = response
-        self._conn.send(json.dumps(response))
+        response = json.dumps(response)
+        self._conn.send(struct.pack(">I", len(response)))
+        self._conn.send(response)
         self.meta['response_time'] = str(datetime.datetime.now())
     
     def is_replied(self):
@@ -68,17 +70,17 @@ class Connection(Thread):
     def run(self):
         while True:
             request = self.get_request()
+            if not request:
+                continue
             request_processor = RequestProcessor(request)
             request_processor.start()
     
     def get_request(self):
-        data = []
-        while True:
-            fragment = self.conn.recv(10240)
-            data.append(fragment)
-            try:
-                parameters = json.loads(''.join(data))
-                break
-            except:
-                pass
-        return Request(self.conn, parameters)
+        recved = self.conn.recv(4)
+        if recved:
+            print [ord(x) for x in recved]
+            request_data_length = struct.unpack(">I", recved)[0]
+            recved = self.conn.recv(request_data_length)
+            print ">>>",recved
+            parameters = json.loads(recved)
+            return Request(self.conn, parameters)
