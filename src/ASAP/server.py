@@ -1,5 +1,5 @@
 from ASAP.network import Connection
-from ASAP.models import DatabaseManager
+from ASAP.db import *
 from ASAP import settings
 
 import os
@@ -10,7 +10,7 @@ class Server(object):
     connections=[]
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(DatabaseManager, cls).__new__(
+            cls._instance = super(Server, cls).__new__(
                                 cls, *args, **kwargs)
             cls._instance.init_server()
         return cls._instance
