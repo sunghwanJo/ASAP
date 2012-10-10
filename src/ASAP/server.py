@@ -6,7 +6,16 @@ import os
 from socket import AF_INET, SOCK_STREAM, socket
 
 class Server(object):
-    def __init__(self, host='', port=0):
+    _instance = None
+    connections=[]
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(DatabaseManager, cls).__new__(
+                                cls, *args, **kwargs)
+            cls._instance.init_server()
+        return cls._instance
+
+    def init_server(self, host='', port=0):
         self.prepare_logging()
         DatabaseManager().init_database()
         if host == '':
@@ -34,8 +43,9 @@ class Server(object):
         while True:
             try:
                 conn, addr = s.accept()
-                request_acceptor = Connection(conn, addr)
-                request_acceptor.start()
+                connection = Connection(conn, addr)
+                self.connections.append(connection)
+                connection.start()
             except Exception, e:
                 print e
 
