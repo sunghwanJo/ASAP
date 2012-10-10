@@ -1,4 +1,3 @@
-from ASAP.navigator import Navigator
 from ASAP.exceptions import NoParameterError
 from ASAP import settings
 from threading import Thread
@@ -43,6 +42,9 @@ class RequestProcessor(Thread):
         traced_back = ''
         try:
             response['protocol'] = self.request.get_parameter('protocol')
+            import ASAP.navigator
+            reload(ASAP.navigator)
+            from ASAP.navigator import Navigator
             view = Navigator.get_view(self.request.get_parameter('protocol'))
             response.update(view(self.request))
         except Exception, exception:

@@ -1,4 +1,3 @@
-from ASAP.network import Connection
 from ASAP.db import *
 from ASAP import settings
 
@@ -43,6 +42,9 @@ class Server(object):
         while True:
             try:
                 conn, addr = s.accept()
+                import ASAP.network
+                reload(ASAP.network)
+                from ASAP.network import Connection
                 connection = Connection(conn, addr)
                 self.connections.append(connection)
                 connection.start()
