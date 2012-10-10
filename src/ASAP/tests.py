@@ -12,13 +12,14 @@ class Client(object):
     
     def request(self, request_data):
         request_data = json.dumps(request_data)
-        packed = struct.pack(">I", len(request_data))
-        self.cs.send(packed)
+        self.cs.send('%d\n'%len(request_data))
         self.cs.send(request_data)
-        response_length = struct.unpack(">I", self.cs.recv(4))[0]
-        print 'length',response_length
-        result = json.loads(''.join(self.cs.recv(response_length)))
-        return result
+        recved = self.cs.recv(15)
+        print '>>>',recved
+        index = recved.find('\n')
+        response_length = int(recved[:index])
+        result = '%s%s'%(recved[recved.find('\n')+1:], self.cs.recv(response_length-len(recved)+1+index))
+        return json.loads(result)
 
 
 class TestBasic(unittest.TestCase):

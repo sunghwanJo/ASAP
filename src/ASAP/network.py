@@ -26,7 +26,7 @@ class Request(object):
     def reply(self, response):
         self.response = response
         response = json.dumps(response)
-        self._conn.send(struct.pack(">I", len(response)))
+        self._conn.send('%s\n'%len(response))
         self._conn.send(response)
         self.meta['response_time'] = str(datetime.datetime.now())
     
@@ -76,11 +76,12 @@ class Connection(Thread):
             request_processor.start()
     
     def get_request(self):
-        recved = self.conn.recv(4)
+        recved = self.conn.recv(15)
         if recved:
             print [ord(x) for x in recved]
-            request_data_length = struct.unpack(">I", recved)[0]
-            recved = self.conn.recv(request_data_length)
-            print ">>>",recved
-            parameters = json.loads(recved)
+            index = recved.find('\n')
+            response_length = int(recved[:index])
+            parameters = '%s%s'%(recved[recved.find('\n')+1:], self.conn.recv(response_length-len(recved)+1+index))
+            print parameters
+            parameters = json.loads(parameters)
             return Request(self.conn, parameters)

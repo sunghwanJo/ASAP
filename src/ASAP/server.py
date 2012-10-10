@@ -1,8 +1,3 @@
-'''
-Created on 2012. 10. 3.
-
-@author: Anonymous
-'''
 from ASAP.network import Connection
 from ASAP.models import DatabaseManager
 from ASAP import settings

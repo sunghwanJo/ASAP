@@ -29,7 +29,6 @@ class User(Base):
         self.password = hashlib.sha256(password)
 
 
-
 class DatabaseManager(object):
     _instance = None
     _engine = None
@@ -101,7 +100,7 @@ class DatabaseManager(object):
         Base.metadata.create_all(self.get_engine())
         self.session = sessionmaker(bind=self.get_engine(), autoflush=True, autocommit=False)
 
-    def init_test_database():
+    def init_test_database(self):
         '''
         TEST 를 위한 Database 를 메모리 상에 만든다. 물론 Session 도.
         '''
@@ -109,5 +108,5 @@ class DatabaseManager(object):
         self.session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
         Base.metadata.create_all(engine)
 
-    def get_session():
+    def get_session(self):
         return self.session()
