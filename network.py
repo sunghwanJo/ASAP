@@ -73,7 +73,7 @@ class Connection(Thread):
         while True:
             request = self.get_request()
             if not request:
-                continue
+                break
             request_processor = RequestProcessor(request)
             request_processor.start()
     
