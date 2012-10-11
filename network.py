@@ -1,7 +1,7 @@
 from ASAP.exceptions import NoParameterError
 from ASAP import settings
 from threading import Thread
-import json, datetime, struct
+import json, datetime
             
 
 class Request(object):
@@ -42,9 +42,9 @@ class RequestProcessor(Thread):
         traced_back = ''
         try:
             response['protocol'] = self.request.get_parameter('protocol')
-            import ASAP.navigator
-            reload(ASAP.navigator)
-            from ASAP.navigator import Navigator
+            import navigator
+            reload(navigator)
+            from navigator import Navigator
             view = Navigator.get_view(self.request.get_parameter('protocol'))
             response.update(view(self.request))
         except Exception, exception:
@@ -64,15 +64,18 @@ class RequestProcessor(Thread):
             logger.log()
 
 class Connection(Thread):
+    default_protocols=['university_list']
     def __init__(self, conn, addr):
         Thread.__init__(self)
         self.conn = conn
         self.addr = addr
     
     def run(self):
+        self.send_default_info()
         while True:
             request = self.get_request()
             if not request:
+                self.conn.close()
                 break
             request_processor = RequestProcessor(request)
             request_processor.start()
@@ -87,3 +90,9 @@ class Connection(Thread):
             print parameters
             parameters = json.loads(parameters)
             return Request(self.conn, parameters)
+
+    def send_default_info(self):
+         for protocol in self.default_protocols:
+            parameters = dict(protocol=protocol)
+            request_processor = RequestProcessor(Request(self.conn, parameters))
+            request_processor.start()

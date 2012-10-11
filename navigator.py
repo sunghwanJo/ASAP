@@ -1,5 +1,4 @@
 from ASAP.exceptions import ProtocolNotFoundError
-from ASAP.views import *
 
 class Navigator(object):
     protocols = dict(test=lambda request: dict())

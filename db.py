@@ -1,5 +1,11 @@
 #-*-coding:utf8-*-
-from ASAP.models import *
+import sqlalchemy as db
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm.session import sessionmaker
+from sqlalchemy.pool import NullPool
+
+Base = declarative_base()
+
 class DatabaseManager(object):
     _instance = None
     _engine = None
@@ -42,7 +48,6 @@ class DatabaseManager(object):
                                  'pool_size': 300,
                                  'max_overflow': 10,
                                  'pool_recycle': 5,
-                                 'echo': False,
                                  'echo_pool': False}
             return CONNECTION_STRING, SQLALCHEMY_KWARGS
         def get_sqlite_settings():
@@ -75,7 +80,7 @@ class DatabaseManager(object):
         '''
         TEST 를 위한 Database 를 메모리 상에 만든다. 물론 Session 도.
         '''
-        engine = create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
+        engine = db.create_engine('sqlite://', convert_unicode=True, encoding='utf-8', echo=False)
         self.session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
         Base.metadata.create_all(engine)
 

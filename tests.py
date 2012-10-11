@@ -1,4 +1,4 @@
-import unittest, json, struct
+import unittest, json
 from socket import AF_INET, SOCK_STREAM, socket
 
 HOST='127.0.0.1'

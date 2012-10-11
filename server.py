@@ -1,4 +1,4 @@
-from ASAP.db import *
+from ASAP.db import DatabaseManager
 from ASAP import settings
 
 import os
