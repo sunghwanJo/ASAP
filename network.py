@@ -46,7 +46,9 @@ class RequestProcessor(Thread):
             reload(navigator)
             from navigator import Navigator
             view = Navigator.get_view(self.request.get_parameter('protocol'))
-            response.update(view(self.request))
+            return_dict = view(self.request)
+            if type(return_dict) == dict:
+                response.update(view(self.request))
         except Exception, exception:
             response['status'] = dict(code=str(exception.__class__.__name__), reason=unicode(exception))
             import traceback

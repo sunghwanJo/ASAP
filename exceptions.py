@@ -16,3 +16,6 @@ class ProtocolNotFoundError(ASAPError):
 
 class IllegalStateError(ASAPError):
     pass
+
+class UnsupportedVersionError(ASAPError):
+    pass

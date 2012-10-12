@@ -36,7 +36,7 @@ class DatabaseManager(object):
             self._engine = engine
             return engine
         def get_mysql_settings():
-            CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=1' % \
+            CONNECTION_STRING = 'mysql://%s:%s@%s/%s?charset=utf8&use_unicode=0' % \
                 (settings.DATABASE['username'],
                  settings.DATABASE['password'],
                  settings.DATABASE['host'],
