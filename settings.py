@@ -13,6 +13,6 @@ DATABASE = {
     'connection_string':'',#if type is other, requires custom connection string
     'dbname':'oic',#database name for mysql, filename for sqlite
     'username':'oic',#for mysql
-    'password':'5wq2MchaJhBYvqLf',#for mysql
+    'password':'dDMAtChY4Hm6XLDG',#for mysql
     'host':'',#for mysql
 }

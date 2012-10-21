@@ -10,7 +10,8 @@ class Logger(object):
                 'Time': {'Request Time':self.request.meta['request_time'], 'Response Time':self.request.meta['response_time']},
                 'Request':self.request.parameters,
                 'Response':self.request.response,
-                'Error':'\n%s'%traced_back
+                'Error':'\n%s'%traced_back,
+                'TraceKey' : self.request.__hash__()
                }
     
     def get_log_str(self, key, value):
@@ -22,6 +23,6 @@ class Logger(object):
     def log(self):
         f = file(settings.LOG_FILE_PATH, 'a')
         f.write('\n\n%s\n'%('='*70))        
-        for key in ['Request', 'Response', 'Time', 'Error']:
+        for key in ['Request', 'Response', 'Time', 'Error', 'TraceKey']:
             f.write(self.get_log_str(key, self.log_content[key]))
         f.close()

@@ -74,7 +74,7 @@ class DatabaseManager(object):
         '''
         
         Base.metadata.create_all(self.get_engine())
-        self.session = sessionmaker(bind=self.get_engine(), autoflush=True, autocommit=False)
+        self.session = sessionmaker(bind=self.get_engine(), autoflush=True, autocommit=False)()
 
     def init_test_database(self):
         '''
@@ -85,4 +85,4 @@ class DatabaseManager(object):
         Base.metadata.create_all(engine)
 
     def get_session(self):
-        return self.session()
+        return self.session
